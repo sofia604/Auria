@@ -1,15 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import commands from '../assets/commands.json';
 
 const circleSize = 80;
+const SERVER_URL = 'http://localhost:3000/execute-sequence'; // 👈 your PC's IP
 
 export default function GameScreen() {
   const [score, setScore] = useState(0);
   const [position, setPosition] = useState({ x: 100, y: 100 });
   const [timeLeft, setTimeLeft] = useState(30);
   const [gameOver, setGameOver] = useState(false);
-  const [layout, setLayout] = useState<{ width: number; height: number } | null>(null); // To store container size
+  const [layout, setLayout] = useState<{ width: number; height: number } | null>(null);
+  const [temp_movements,settemp_movements] = useState<string[]>([])
+
+  //useEffect(() => {
+  //  let temp_temp_movements: string[] = []
+  //  commands.forEach(mov =>{
+  //    temp_temp_movements.push(mov.data);
+  //  })
+  //  console.log(temp_temp_movements)
+  //  settemp_movements(temp_temp_movements)
+  //},[])
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -26,15 +37,29 @@ export default function GameScreen() {
 
   useEffect(() => {
     if (gameOver) return;
-
+    
+    // Extract data values from commands.json
+    let temp_movements = commands.mainData.map((cmd: any) => cmd.data);
+    let flag = 0;
+    console.log(temp_movements[0])
     const interval = setInterval(() => {
-      commands.forEach(cmd => {
-        fetch(`http://${cmd.ip}`, {
+      if (flag < temp_movements.length) {
+        fetch(SERVER_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(cmd.data)
-        }).catch(err => console.log('HTTP Error:', err));
-      });
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: temp_movements[flag] }),
+        })
+          .then((res) => res.json())
+          .then((data) => console.log('Robot Response:', data))
+          .catch((err) => console.log('Error sending to server:', err));
+        
+        flag++;
+      } else {
+        // Reset flag when all movements are sent
+        flag = 0;
+      }
     }, 5000);
 
     return () => clearInterval(interval);

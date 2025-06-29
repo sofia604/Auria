@@ -20,6 +20,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome to Tap the Circle</ThemedText>
         <Link href="/GameScreen" style={styles.titleContainer}>Start Game</Link>
+        <Link href="./VideoScreen" style={styles.titleContainer}>Start Video</Link>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
