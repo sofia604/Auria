@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import commands from '../assets/commands.json';
 
 const circleSize = 80;
-const SERVER_URL = 'http://localhost:3000/execute-sequence'; // 👈 your PC's IP
+const SERVER_URL = 'http://192.168.4.2:3000/execute-sequence'; // 👈 your PC's IP
 
 export default function GameScreen() {
   const [score, setScore] = useState(0);
